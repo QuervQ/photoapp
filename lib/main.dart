@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Image apps'),
     );
   }
 }
@@ -39,6 +39,21 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void showontapimage(int index) {
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder: (context) {
+          return Scaffold(
+            body: Center(
+              child: Image(image: FileImage(File(_images[index].path))),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,9 +64,11 @@ class _MyHomePageState extends State<MyHomePage> {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
             ),
+
             itemCount: _images.length,
             itemBuilder: (BuildContext context, int index) {
-              return ClipRRect(
+              return GestureDetector(
+                onTap: () => showontapimage(index),
                 child: Image.file(File(_images[index].path), fit: BoxFit.cover),
               );
             },
