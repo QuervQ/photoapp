@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
-
+import 'package:crypto/crypto.dart';
 import 'package:photoapp/imagedetail.dart';
-// import 'imagedetail.dart';
 
 class MyHomePage extends StatefulWidget {
   final String title;
@@ -15,26 +14,31 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<XFile> allimages = [];
+  final Set<String> imagehashes = {};
+
+  Future<String> _calculateImageHash(XFile image) async {
+    final bytes = await image.readAsBytes();
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
 
   Future<void> _pickImages() async {
     final ImagePicker picker = ImagePicker();
     final List<XFile> images = await picker.pickMultiImage();
 
-    setState(() {
-      for (var image in images) {
-        // ファイル名で重複チェック（パスは毎回変わる可能性があるため）
-        String fileName = image.name;
+    for (var image in images) {
+      String hash = await _calculateImageHash(image);
 
-        bool alreadyExists = allimages.any((img) => img.name == fileName);
-
-        if (!alreadyExists) {
+      if (!imagehashes.contains(hash)) {
+        setState(() {
           allimages.add(image);
-          debugPrint('追加: $fileName');
-        } else {
-          debugPrint('重複のためスキップ: $fileName');
-        }
+          imagehashes.add(hash);
+        });
+        debugPrint('追加: ${image.name}');
+      } else {
+        debugPrint('重複のためスキップ: ${image.name} (同じ画像が既に存在)');
       }
-    });
+    }
   }
 
   @override
