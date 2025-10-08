@@ -15,7 +15,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<XFile> allimages = [];
   final Set<String> imagehashes = {};
-
   Future<String> _calculateImageHash(XFile image) async {
     final bytes = await image.readAsBytes();
     final digest = sha256.convert(bytes);
@@ -60,8 +59,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     context,
                     CupertinoPageRoute(
                       builder:
-                          (context) =>
-                              (Imagedetail(index: index, allimages: allimages)),
+                          (context) => (Imagedetail(
+                            index: index,
+                            allimages: allimages,
+                            images: allimages[index],
+                          )),
                     ),
                   );
                 },
