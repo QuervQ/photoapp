@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "595481476226",
+    "project_id": "photoapp-c0241",
+    "storage_bucket": "photoapp-c0241.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:595481476226:android:dff7bbe4a9de705b4c889b",
+        "android_client_info": {
+          "package_name": "com.example.photoapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBd2S5BOrIWEp85yrx_o5YW5xYK7uKFF-0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

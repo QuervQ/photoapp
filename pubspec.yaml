@@ -37,6 +37,9 @@ dependencies:
   image_picker: ^1.2.0
   crypto: ^3.0.6
   exif: ^3.3.0
+  firebase_core: ^4.2.0
+  firebase_auth: ^6.1.1
+  google_sign_in: ^7.2.0
 
 dev_dependencies:
   flutter_test:

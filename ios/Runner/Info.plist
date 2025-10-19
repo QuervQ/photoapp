@@ -59,6 +59,21 @@
     </array>
     <key>NSLocalNetworkUsageDescription</key>
     <string>デバッグ接続のためにローカルネットワークへのアクセスが必要です</string>
+    <key>GIDClientID</key>
+    <string>595481476226-toj7uk9avo9ssfun0uak69o6742do435.apps.googleusercontent.com</string>
+
+<key>CFBundleURLTypes</key>
+<array>
+    <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <!-- REVERSED_CLIENT_ID の値に変更 -->
+            <string>com.googleusercontent.apps.595481476226-toj7uk9avo9ssfun0uak69o6742do435</string>
+        </array>
+    </dict>
+</array>
 
 </dict>
 </plist>
