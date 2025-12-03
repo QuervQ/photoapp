@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import ImageIO
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -30,8 +31,12 @@ import UIKit
                 self?.showAR(withImagePath: path, from: flutterVC)
                 result(nil)
             }
+            else if call.method == "getExif",
+                    let args = call.arguments as? [String: Any],
+                    let path = args ["path"] as? String {
+                
+            }
         }
-
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 

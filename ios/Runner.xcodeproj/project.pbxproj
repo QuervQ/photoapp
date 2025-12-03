@@ -16,6 +16,7 @@
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		DC3F152536ACE9645078AE22 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54B1EC25B0F2BE9A546674C8 /* Pods_Runner.framework */; };
+		FCAEAE4C2EA9B5BF0058D68D /* getexif.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCAEAE4B2EA9B5B50058D68D /* getexif.swift */; };
 		FCCC4AAF2E97D2290018EB1E /* ar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCCC4AAE2E97D2230018EB1E /* ar.swift */; };
 /* End PBXBuildFile section */
 
@@ -65,6 +66,7 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F20AFA67890FDAC8DA0B2EF5 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		FCAEAE4B2EA9B5B50058D68D /* getexif.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = getexif.swift; sourceTree = "<group>"; };
 		FCCC4AAE2E97D2230018EB1E /* ar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ar.swift; sourceTree = "<group>"; };
 		FDCB4AA385E5E3D4A4B29061 /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -141,6 +143,7 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				FCAEAE4B2EA9B5B50058D68D /* getexif.swift */,
 				FCCC4AAE2E97D2230018EB1E /* ar.swift */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
@@ -400,6 +403,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FCAEAE4C2EA9B5BF0058D68D /* getexif.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				FCCC4AAF2E97D2290018EB1E /* ar.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,

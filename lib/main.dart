@@ -9,9 +9,8 @@ import 'dart:io';
 
 void main() async {
   debugPrint('Current directory: ${Directory.current.path}');
-  await dotenv.load(fileName: ".env");
-
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
@@ -77,7 +76,6 @@ class _GoogleSignInState extends State<GoogleSignInpage> {
                     ),
                   );
                 }
-                // 猫一覧画面を表示する
               },
               child: const Text('Google'),
             ),
