@@ -60,20 +60,24 @@
     <key>NSLocalNetworkUsageDescription</key>
     <string>デバッグ接続のためにローカルネットワークへのアクセスが必要です</string>
     <key>GIDClientID</key>
-    <string>595481476226-toj7uk9avo9ssfun0uak69o6742do435.apps.googleusercontent.com</string>
+    <string>com.googleusercontent.apps.765471666514-2e01sbampdbca56kiv2m6492geedg2ad</string>
+    <key>GIDServerClientID</key>
+    <string>765471666514-ov4172k76e2v4mru51b5bfis7q5k5ffe.apps.googleusercontent.com</string>
 
 <key>CFBundleURLTypes</key>
 <array>
-    <dict>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleURLSchemes</key>
-        <array>
-            <!-- REVERSED_CLIENT_ID の値に変更 -->
-            <string>com.googleusercontent.apps.595481476226-toj7uk9avo9ssfun0uak69o6742do435</string>
-        </array>
-    </dict>
+	<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+			<!-- TODO Replace this value: -->
+			<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
+			<string>com.googleusercontent.apps.765471666514-2e01sbampdbca56kiv2m6492geedg2ad</string>
+		</array>
+	</dict>
 </array>
+<!-- End of the Google Sign-in Section -->
 
 </dict>
 </plist>
