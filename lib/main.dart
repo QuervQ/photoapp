@@ -1,19 +1,23 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'allimages.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 void main() async {
   debugPrint('Current directory: ${Directory.current.path}');
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Supabase.initialize(
+    url: dotenv.get('SUPABASE_URL'),
+    anonKey: dotenv.get('SUPABASE_ANON_KEY'),
+  );
   runApp(const MyApp());
 }
+
+final supabase = Supabase.instance.client;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -37,47 +41,54 @@ class GoogleSignInpage extends StatefulWidget {
 }
 
 class _GoogleSignInState extends State<GoogleSignInpage> {
-  Future<UserCredential?> signInWithGoogle() async {
-    try {
-      final GoogleSignInAccount googleUser =
-          await GoogleSignIn.instance.authenticate();
+  Future<void> googlesignin() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
-      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+    unawaited(
+      googleSignIn.initialize(
+        clientId: dotenv.get('GCP_IOS_CLIENT_ID'),
+        serverClientId: dotenv.get('GCP_WEB_CLIENT_ID'),
+      ),
+    );
+    final googleAccount = await googleSignIn.authenticate();
+    final googleAuthorization = await googleAccount.authorizationClient
+        .authorizationForScopes([]);
+    final googleAuthentication = googleAccount.authentication;
+    final idToken = googleAuthentication.idToken;
+    final accessToken = googleAuthorization?.accessToken;
 
-      final credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken,
-      );
-
-      return await FirebaseAuth.instance.signInWithCredential(credential);
-    } catch (e) {
-      // サインアウトに失敗しても無視する
+    if (idToken == null) {
+      throw Exception('ID token is null');
     }
-    return null;
+
+    await supabase.auth.signInWithIdToken(
+      provider: OAuthProvider.google,
+      idToken: idToken,
+      accessToken: accessToken,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Google Login')),
       body: Center(
         child: Column(
-          children: <Widget>[
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
             ElevatedButton(
               onPressed: () async {
-                // サインイン画面を表示する
-                final userCredential = await signInWithGoogle();
-
-                if (userCredential != null && context.mounted) {
-                  Navigator.pushReplacement(
+                await googlesignin();
+                if (context.mounted) {
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder:
-                          (context) => const MyHomePage(title: 'Image apps'),
+                          (context) => const MyHomePage(title: 'All Images'),
                     ),
                   );
                 }
               },
-              child: const Text('Google'),
+              child: const Text('Google Sign-In'),
             ),
           ],
         ),
