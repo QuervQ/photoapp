@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:photoapp/imagedetail.dart';
+import 'upload_image.dart';
 
 class MyHomePage extends StatefulWidget {
   final String title;
@@ -15,15 +16,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<XFile> allimages = [];
   final Set<String> imagehashes = {};
+
   Future<String> _calculateImageHash(XFile image) async {
     final bytes = await image.readAsBytes();
     final digest = sha256.convert(bytes);
     return digest.toString();
   }
 
-  Future<void> _pickImages() async {
+  Future<List<XFile>> _pickImages() async {
     final ImagePicker picker = ImagePicker();
     final List<XFile> images = await picker.pickMultiImage();
+
+    return images;
+  }
+
+  Future<void> _importImage() async {
+    final images = await _pickImages();
 
     for (var image in images) {
       String hash = await _calculateImageHash(image);
@@ -80,10 +88,14 @@ class _MyHomePageState extends State<MyHomePage> {
             child: CupertinoButton(
               color: Colors.blue,
               borderRadius: BorderRadius.circular(30),
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              onPressed: _pickImages,
+              onPressed: _importImage,
               child: Text("Import Images"),
             ),
+          ),
+          Positioned(
+            bottom: 16,
+            left: 16,
+            child: UploadImage(importImage: _pickImages, title: widget.title),
           ),
         ],
       ),
