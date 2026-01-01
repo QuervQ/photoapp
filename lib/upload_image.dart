@@ -28,6 +28,7 @@ class _UploadImageState extends State<UploadImage> {
       final userId = supabase.auth.currentUser?.id;
       for (var images in allimages) {
         final ctype = lookupMimeType(images.path);
+        debugPrint(ctype);
         final fileName =
             '$userId/${DateTime.now().millisecondsSinceEpoch}_${images.name}';
         final bytes = await File(images.path).readAsBytes();
