@@ -12,39 +12,45 @@ class GoogleSignInPage extends StatelessWidget {
 
   Future<void> googlesignin(BuildContext context) async {
     final googleSignIn = GoogleSignIn.instance;
-
-    unawaited(
-      googleSignIn.initialize(
-        clientId: dotenv.get('GCP_IOS_CLIENT_ID'),
-        serverClientId: dotenv.get('GCP_WEB_CLIENT_ID'),
-      ),
-    );
-
-    final googleAccount = await googleSignIn.authenticate();
-    final googleAuthorization = await googleAccount.authorizationClient
-        .authorizationForScopes([]);
-    final googleAuthentication = googleAccount.authentication;
-
-    final idToken = googleAuthentication.idToken;
-    final accessToken = googleAuthorization?.accessToken;
-
-    if (idToken == null) {
-      throw Exception('ID token is null');
-    }
-
-    await supabase.auth.signInWithIdToken(
-      provider: OAuthProvider.google,
-      idToken: idToken,
-      accessToken: accessToken,
-    );
-
-    if (context.mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const MyHomePage(title: 'All Images'),
+    try {
+      unawaited(
+        googleSignIn.initialize(
+          clientId: dotenv.get('GCP_IOS_CLIENT_ID'),
+          serverClientId: dotenv.get('GCP_WEB_CLIENT_ID'),
         ),
       );
+
+      final googleAccount = await googleSignIn.authenticate();
+      final googleAuthorization = await googleAccount.authorizationClient
+          .authorizationForScopes([]);
+      final googleAuthentication = googleAccount.authentication;
+
+      final idToken = googleAuthentication.idToken;
+      final accessToken = googleAuthorization?.accessToken;
+
+      if (idToken == null) {
+        throw Exception('ID token is null');
+      }
+
+      await supabase.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
+        accessToken: accessToken,
+      );
+
+      if (context.mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const MyHomePage(title: 'All Images'),
+          ),
+        );
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Sign-in failed: $e')));
     }
   }
 
