@@ -3,7 +3,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:async';
-import 'allimages.dart';
 
 final supabase = Supabase.instance.client;
 
@@ -37,15 +36,6 @@ class GoogleSignInPage extends StatelessWidget {
         idToken: idToken,
         accessToken: accessToken,
       );
-
-      if (context.mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const MyHomePage(title: 'All Images'),
-          ),
-        );
-      }
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(
