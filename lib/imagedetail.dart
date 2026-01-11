@@ -20,7 +20,7 @@ class Imagedetail extends StatefulWidget {
 }
 
 class _ImagedetailState extends State<Imagedetail> {
-  static const platform = MethodChannel('com.QuervQ.photoapp/swift');
+  static const platform = MethodChannel('dev.quervq.photoapp/swift');
 
   Future<void> openARView() async {
     try {

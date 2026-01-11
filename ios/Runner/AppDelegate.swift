@@ -4,7 +4,7 @@ import ImageIO
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
-    private let methodChannelName = "com.QuervQ.photoapp/swift"
+    private let methodChannelName = "dev.quervq.photoapp/swift"
     var imagePath : String?
 
     override func application(
