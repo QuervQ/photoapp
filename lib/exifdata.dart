@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'package:exif/exif.dart';
+// import 'dart:io';
 
 class Exifdata extends StatefulWidget {
   final List<XFile> allimages;
@@ -13,39 +13,36 @@ class Exifdata extends StatefulWidget {
 }
 
 class _ExifdataState extends State<Exifdata> {
+  static const platform = MethodChannel('dev.quervq.photoapp/swift');
+
   Future<String> getexif(List<XFile> allimages, int index) async {
-    final pickedFile = allimages[index];
-    final tags = await readExifFromBytes(
-      await File(pickedFile.path).readAsBytes(),
-    );
-    String imageWidth = tags['Image ImageWidth'].toString();
-    String imageLength = tags['Image ImageLength'].toString();
-    String exifOffset = tags['Image ExifOffset'].toString();
-    String dateTime = tags['Image DateTime'].toString();
-    String imageModel = tags['Image Model'].toString();
-    String imageMake = tags['Image Make'].toString();
-    String imageOrientation = tags['Image Orientation'].toString();
-    String whiteBalance = tags['EXIF WhiteBalance'].toString();
-    String gpsLatitude = tags['GPS GPSLatitude'].toString();
-    String gpsLongitude = tags['GPS GPSLongitude'].toString();
-    String gpsAltitude = tags['GPS GPSAltitude'].toString();
-    String gpsLatitudeRef = tags['GPS GPSLatitudeRef'].toString();
-    String gpsLongitudeRef = tags['GPS GPSLongitudeRef'].toString();
-    String gpsAltitudeRef = tags['GPS GPSAltitudeRef'].toString();
-    debugPrint(
-      '画像の幅: $imageWidth'
-      '画像の高さ: $imageLength'
-      'Exifオフセット: $exifOffset'
-      '撮影日時: $dateTime'
-      'カメラモデル: $imageModel'
-      'カメラメーカー: $imageMake'
-      '画像の向き: $imageOrientation'
-      'ホワイトバランス: $whiteBalance'
-      '緯度: $gpsLatitude $gpsLatitudeRef'
-      '経度: $gpsLongitude $gpsLongitudeRef'
-      '高度: $gpsAltitude $gpsAltitudeRef',
-    );
-    return tags.toString();
+    try {
+      final pickedFile = allimages[index];
+      final result = await platform.invokeMethod('getExifData', {
+        'path': pickedFile.path,
+      });
+
+      if (result == null) {
+        return 'No EXIF data found';
+      }
+
+      // 結果を整形して表示
+      final exifData = result as Map<dynamic, dynamic>;
+      final buffer = StringBuffer();
+
+      exifData.forEach((key, value) {
+        buffer.writeln('$key: $value');
+      });
+
+      debugPrint('EXIF Data: ${buffer.toString()}');
+      return buffer.toString();
+    } on PlatformException catch (e) {
+      debugPrint('Failed to get EXIF data: ${e.message}');
+      return 'Error: ${e.message}';
+    } catch (e) {
+      debugPrint('Unexpected error: $e');
+      return 'Error: $e';
+    }
   }
 
   @override

@@ -26,14 +26,19 @@ import ImageIO
 
         // Flutter 側から呼ばれた時の処理
         methodChannel.setMethodCallHandler { [weak self] (call, result) in
-            if call.method == "switchArMode",let args = call.arguments as? [String: Any],
-            let path = args["path"]as? String{
+            if call.method == "switchArMode",
+               let args = call.arguments as? [String: Any],
+               let path = args["path"]as? String{
                 self?.showAR(withImagePath: path, from: flutterVC)
                 result(nil)
             }
-            else if call.method == "getExif",
+            else if call.method == "getExifData",
                     let args = call.arguments as? [String: Any],
                     let path = args ["path"] as? String {
+                self?.getExif(withImagePath: path, result: result)
+                            } else {
+                                result(FlutterMethodNotImplemented)
+                            
                 
             }
         }
@@ -44,6 +49,14 @@ import ImageIO
         let arVC = ARViewController()
         arVC.imagePath = path
         vc.present(arVC, animated: true)
+    }
+    func getExif(withImagePath path: String, result: @escaping FlutterResult) {
+        let gtex = GetExif()
+        gtex.imagePath = path
+        let exifData = gtex.getExif()
+        result(exifData)
+        
+        
     }
 }
 
