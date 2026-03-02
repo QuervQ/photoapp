@@ -6,7 +6,7 @@ import ARKit
 class ARViewController: UIViewController {
     var imagePath: String?
     var arView: ARView!
-    private var isPlaneDetectionActive = true
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -14,6 +14,7 @@ class ARViewController: UIViewController {
         // ARViewの初期化（明示的にメインスレッドで実行）
         MainActor.assumeIsolated {
             arView = ARView(frame: view.bounds)
+            arView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             arView.automaticallyConfigureSession = false
             view.addSubview(arView)
             
@@ -136,6 +137,7 @@ class ARViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        guard let arView = arView else { return }
         arView.session.pause()
     }
 }
