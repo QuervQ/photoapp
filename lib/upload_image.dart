@@ -7,12 +7,8 @@ import 'package:mime/mime.dart';
 
 class UploadImage extends StatefulWidget {
   final String title;
-  final Future<List<XFile>> Function() importImage;
-  const UploadImage({
-    super.key,
-    required this.title,
-    required this.importImage,
-  });
+  final Future<void> Function(List<String> newUploadedUrls) onUploaded;
+  const UploadImage({super.key, required this.title, required this.onUploaded});
 
   @override
   State<UploadImage> createState() => _UploadImageState();
@@ -24,8 +20,19 @@ class _UploadImageState extends State<UploadImage> {
   Future<void> uploadCloud() async {
     debugPrint('uploadCloud start'); // ← 重要
     try {
-      final allimages = await widget.importImage();
+      final picker = ImagePicker();
+      final allimages = await picker.pickMultiImage();
+      if (allimages.isEmpty) {
+        return;
+      }
+
       final userId = supabase.auth.currentUser?.id;
+      if (userId == null) {
+        return;
+      }
+
+      final List<String> newUploadedUrls = [];
+
       for (var images in allimages) {
         final ctype = lookupMimeType(images.path);
         debugPrint(ctype);
@@ -41,7 +48,13 @@ class _UploadImageState extends State<UploadImage> {
             );
 
         debugPrint(fullpath);
+        final signedUrl = await supabase.storage
+            .from('photos')
+            .createSignedUrl(fileName, 60 * 60);
+        newUploadedUrls.add(signedUrl);
       }
+
+      await widget.onUploaded(newUploadedUrls);
     } catch (e, st) {
       debugPrint('Upload failed: $e\n$st');
 
