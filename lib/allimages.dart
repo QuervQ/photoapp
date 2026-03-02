@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter/cupertino.dart';
-import 'dart:io';
-import 'package:crypto/crypto.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:photoapp/imagedetail.dart';
 import 'upload_image.dart';
 
@@ -14,37 +12,87 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<XFile> allimages = [];
-  final Set<String> imagehashes = {};
+  final List<String> allImageUrls = [];
+  bool isInitialLoading = true;
+  final supabase = Supabase.instance.client;
 
-  Future<String> _calculateImageHash(XFile image) async {
-    final bytes = await image.readAsBytes();
-    final digest = sha256.convert(bytes);
-    return digest.toString();
+  Future<void> _openImageDetail(int index) async {
+    if (index < 0 || index >= allImageUrls.length) {
+      return;
+    }
+
+    final imageUrlsSnapshot = List<String>.from(allImageUrls);
+    try {
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder:
+              (context) =>
+                  Imagedetail(index: index, imageUrls: imageUrlsSnapshot),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('詳細画面を開けませんでした: $e')));
+    }
   }
 
-  Future<List<XFile>> _pickImages() async {
-    final ImagePicker picker = ImagePicker();
-    final List<XFile> images = await picker.pickMultiImage();
-
-    return images;
+  @override
+  void initState() {
+    super.initState();
+    _loadUploadedImages();
   }
 
-  Future<void> _importImage() async {
-    final images = await _pickImages();
+  Future<void> _handleUploaded(List<String> newUploadedUrls) async {
+    if (newUploadedUrls.isNotEmpty) {
+      setState(() {
+        allImageUrls.insertAll(0, newUploadedUrls);
+      });
+    }
+    _loadUploadedImages(showLoading: false);
+  }
 
-    for (var image in images) {
-      String hash = await _calculateImageHash(image);
+  Future<void> _loadUploadedImages({bool showLoading = true}) async {
+    final userId = supabase.auth.currentUser?.id;
+    if (userId == null) {
+      setState(() {
+        allImageUrls.clear();
+        isInitialLoading = false;
+      });
+      return;
+    }
 
-      if (!imagehashes.contains(hash)) {
-        setState(() {
-          allimages.add(image);
-          imagehashes.add(hash);
-        });
-        debugPrint('追加: ${image.name}');
-      } else {
-        debugPrint('重複のためスキップ: ${image.name} (同じ画像が既に存在)');
-      }
+    if (showLoading && isInitialLoading) {
+      setState(() {
+        isInitialLoading = true;
+      });
+    }
+
+    try {
+      final files = await supabase.storage.from('photos').list(path: userId);
+      final urls = await Future.wait(
+        files.map((file) {
+          final filePath = '$userId/${file.name}';
+          return supabase.storage
+              .from('photos')
+              .createSignedUrl(filePath, 60 * 60);
+        }),
+      );
+
+      if (!mounted) return;
+      setState(() {
+        allImageUrls
+          ..clear()
+          ..addAll(urls);
+        isInitialLoading = false;
+      });
+    } catch (e, st) {
+      debugPrint('画像一覧の取得に失敗: $e\n$st');
+      if (!mounted) return;
+      setState(() {
+        isInitialLoading = false;
+      });
     }
   }
 
@@ -64,48 +112,34 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Stack(
         children: [
-          GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-            ),
-
-            itemCount: allimages.length,
-            itemBuilder: (BuildContext context, int index) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                      builder:
-                          (context) => (Imagedetail(
-                            index: index,
-                            allimages: allimages,
-                            images: allimages[index],
-                          )),
+          if (isInitialLoading && allImageUrls.isEmpty)
+            const Center(child: CircularProgressIndicator())
+          else
+            GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+              ),
+              itemCount: allImageUrls.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () => _openImageDetail(index),
+                    child: Image.network(
+                      allImageUrls[index],
+                      fit: BoxFit.cover,
                     ),
-                  );
-                },
-                child: Image.file(
-                  File(allimages[index].path),
-                  fit: BoxFit.cover,
-                ),
-              );
-            },
-          ),
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: CupertinoButton(
-              color: Colors.blue,
-              borderRadius: BorderRadius.circular(30),
-              onPressed: _importImage,
-              child: Text("Import Images"),
+                  ),
+                );
+              },
             ),
-          ),
           Positioned(
             bottom: 16,
             left: 16,
-            child: UploadImage(importImage: _pickImages, title: widget.title),
+            child: UploadImage(
+              title: widget.title,
+              onUploaded: _handleUploaded,
+            ),
           ),
         ],
       ),
