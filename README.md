@@ -1,16 +1,18 @@
 # photoapp
 
-A new Flutter project.
+Flutter frontend for `photoapp-backend`.
 
-## Getting Started
+## Environment variables
 
-This project is a starting point for a Flutter application.
+Set the backend base URL in `.env`:
 
-A few resources to get you started if this is your first Flutter project:
+```dotenv
+BACKEND_BASE_URL=http://127.0.0.1:8080
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Current frontend flow
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Email/password signup & login via backend `/auth/signup` and `/auth/login`
+- Room create/list/join via backend `/rooms` APIs
+- Invite code creation via `/rooms/{room_id}/invite`
+- Multiplayer event subscription via backend WebSocket `/ws`
