@@ -51,7 +51,8 @@ class ARViewController: UIViewController, ARSessionDelegate {
 
         arView.session.delegate = self
 
-        // 注意: .occlusion を有効にするとLiDARメッシュが壁面の画像を隠すため無効化
+        // LiDARメッシュによるオクルージョンを有効化（物の裏に回ると画像が隠れる）
+        arView.environment.sceneUnderstanding.options.insert(.occlusion)
 
         #if DEBUG
         arView.debugOptions = [
